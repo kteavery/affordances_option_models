@@ -63,7 +63,7 @@ flags.DEFINE_float(
      ' 0, all options are affordable. When set to 1, no options are affordable.'
      ' If this is None and --affordances_name=learned, and error will be'
      ' thrown requiring the user to set it.'))
-flags.DEFINE_string('save_path', '~/affordances_theory/experiment',
+flags.DEFINE_string('save_path', './affordances_theory/experiment',
                     'Path to save affordances, models and policy over options.')
 
 FLAGS = flags.FLAGS

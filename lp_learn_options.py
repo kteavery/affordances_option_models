@@ -40,7 +40,7 @@ flags.DEFINE_integer(
     'Number of CPU workers per program.')
 flags.DEFINE_float('gamma', 0.99, 'Discount factor for training the options.')
 flags.DEFINE_string(
-    'save_path', '~/affordances_theory', 'Location to save options.')
+    'save_path', './affordances_theory', 'Location to save options.')
 flags.DEFINE_integer(
     'max_iterations', 1000,
     'Maximum number of iterations to run the value iteration.')

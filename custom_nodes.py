@@ -297,7 +297,7 @@ class Trainer:
       queue,
       num_intents: int = 8,
       topic_name='default',
-      save_path: str = '~',
+      save_path: str = '.',
       affordances_threshold: float = 0.5,
       seed: int = 0,
       save_every: int = -1,
@@ -438,7 +438,7 @@ class Evaluation:
       writer=None,
       vi_writer=None,
       save_every: int = 1,
-      save_path: str = '~',
+      save_path: str = '.',
       num_eval_episodes: int = 1000,
       ):
     self._trainer_node = trainer_node
