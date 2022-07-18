@@ -17,11 +17,11 @@
 
 from absl.testing import absltest
 from absl.testing import parameterized
-from affordances_option_models import env_utils
-from affordances_option_models import intent_utils
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.intent_utils import intent_utils_taxi
 
-Intents = intent_utils.Intents
-IntentStatus = intent_utils.IntentStatus
+Intents = intent_utils_taxi.Intents
+IntentStatus = intent_utils_taxi.IntentStatus
 
 
 class IntentUtilsTest(parameterized.TestCase):
@@ -30,7 +30,7 @@ class IntentUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Matches passenger state and taxi location',
           'intent_id': Intents.R_in,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'status': IntentStatus.complete,
@@ -38,7 +38,7 @@ class IntentUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Does not matches passenger state and taxi location',
           'intent_id': Intents.G_in,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'status': IntentStatus.incomplete,
@@ -46,7 +46,7 @@ class IntentUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Matches taxi location but not pass state',
           'intent_id': Intents.R_out,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'status': IntentStatus.incomplete,
@@ -54,7 +54,7 @@ class IntentUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Matches pass state but not location',
           'intent_id': Intents.R_in,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 1,
           'col': 0,
           'status': IntentStatus.incomplete,
@@ -94,7 +94,7 @@ class IntentUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Random location + passenger inside, incomplete 1.',
           'intent_id': Intents.G_out,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 2,
           'col': 2,
           'status': IntentStatus.incomplete,
@@ -102,7 +102,7 @@ class IntentUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Random location + passenger inside, incomplete 2.',
           'intent_id': Intents.G_in,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 2,
           'col': 2,
           'status': IntentStatus.incomplete,
@@ -111,11 +111,11 @@ class IntentUtilsTest(parameterized.TestCase):
   def test_is_intent_completed(
       self, row, col, passenger_status, intent_id, status):
 
-    taxi_state = env_utils.state_to_int_fn(
-        env_utils.TaxiState(row, col, passenger_status, 0))
+    taxi_state = env_utils_taxi.state_to_int_fn(
+        env_utils_taxi.TaxiState(row, col, passenger_status, 0))
 
     self.assertEqual(
-        intent_utils.is_intent_completed(None, None, taxi_state, intent_id),
+        intent_utils_taxi.is_intent_completed(None, None, taxi_state, intent_id),
         status)
 
 

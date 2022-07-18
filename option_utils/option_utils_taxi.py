@@ -19,16 +19,16 @@ from absl import logging
 import numpy as np
 
 from affordances_option_models import affordances
-from affordances_option_models import definitions
-from affordances_option_models import env_utils
+from affordances_option_models.definitions import definitions_taxi
+from affordances_option_models.env_utils import env_utils_taxi
 from affordances_option_models import rl
 
-Options = definitions.Options
-OptionsDropping = definitions.OptionsDropping
-OptionsPicking = definitions.OptionsPicking
-OptionsAny = definitions.OptionsAny
+Options = definitions_taxi.Options
+OptionsDropping = definitions_taxi.OptionsDropping
+OptionsPicking = definitions_taxi.OptionsPicking
+OptionsAny = definitions_taxi.OptionsAny
 _TRANSITION_DICT, _TRANSITION_MATRIX = (
-    env_utils.get_transition_and_reward_matrices()[:-1])
+    env_utils_taxi.get_transition_and_reward_matrices()[:-1])
 
 
 def check_option_termination(
@@ -64,29 +64,29 @@ def check_option_termination(
     raise ValueError(
         f'Unknown Option {option}. Valid: {Options.__members__.values()}')
   _, s_tp1, _ = _TRANSITION_DICT[s_t][a_t][0]
-  _, _, passenger_state, _ = env_utils.int_to_state_fn(s_t)
-  taxi_row, taxi_col, _, _ = env_utils.int_to_state_fn(s_tp1)
+  _, _, passenger_state, _ = env_utils_taxi.int_to_state_fn(s_t)
+  taxi_row, taxi_col, _, _ = env_utils_taxi.int_to_state_fn(s_tp1)
 
   if option in OptionsDropping:
     # Option is supposed to drop off a passenger so action must be dropping.
-    if a_t != definitions.ActionMap.DROP:
+    if a_t != definitions_taxi.ActionMap.DROP:
       return False
     # If passenger was not in the car, this option cannot terminate.
-    if passenger_state != env_utils.PASSENGER_INSIDE_CAR_STATUS:
+    if passenger_state != env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS:
       return False
 
   if option in OptionsPicking:
     # Option is supposed to pick up a passenger so action must be picking.
-    if a_t != definitions.ActionMap.PICKUP:
+    if a_t != definitions_taxi.ActionMap.PICKUP:
       return False
     # If the passenger is in the car, then picking up is not possible.
-    if passenger_state == env_utils.PASSENGER_INSIDE_CAR_STATUS:
+    if passenger_state == env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS:
       return False
 
   # Now check if the option "go to" location matches the current taxi position.
   # Options are named "GoToXX_??" where XX us the grid index.
   grid_idx = int(option.name.replace('GoTo', '').split('_')[0])
-  grid_row, grid_col = env_utils.grid_cell_to_xy(grid_idx)
+  grid_row, grid_col = env_utils_taxi.grid_cell_to_xy(grid_idx)
   if (taxi_row, taxi_col) == (grid_row, grid_col):
     return True
   else:
@@ -111,7 +111,7 @@ def compute_per_step_matrices_for_option_learning(
        if the entry (s, a) has a 1, transitions can take place. If it has a zero
        it terminates.
   """
-  taxienv = env_utils.make_taxi_environment()
+  taxienv = env_utils_taxi.make_taxi_environment()
   num_states, num_actions = taxienv.nS, taxienv.nA
   option_step_reward = np.full((num_states, num_actions), r_other)
   option_transition_mask = np.ones((num_states, num_actions), dtype=np.float)

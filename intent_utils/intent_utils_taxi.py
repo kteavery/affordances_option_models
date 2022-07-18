@@ -15,17 +15,17 @@
 
 """Utilities to work with intents in the taxi domain."""
 
-from affordances_option_models import definitions
-from affordances_option_models import env_utils
-from affordances_option_models import option_utils
+from affordances_option_models.definitions import definitions_taxi
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.option_utils import option_utils_taxi
 
-Intents = definitions.Intents
-IntentStatus = definitions.IntentStatus
+Intents = definitions_taxi.Intents
+IntentStatus = definitions_taxi.IntentStatus
 
 
 def is_intent_completed(
     s_i: int,
-    option_id: option_utils.Options,
+    option_id: option_utils_taxi.Options,
     s_f: int,
     intent_id: Intents,
     ) -> IntentStatus:
@@ -42,19 +42,19 @@ def is_intent_completed(
   """
   del s_i, option_id  # Unused.
 
-  final_taxi_state = env_utils.int_to_state_fn(s_f)
+  final_taxi_state = env_utils_taxi.int_to_state_fn(s_f)
 
   if intent_id not in Intents:
     raise ValueError(
         f'Unknown intent_id={intent_id}. See {Intents} for valid intents.')
 
   # Obtain which color is reached at this taxi location.
-  color_reached = env_utils.LOCATION_TO_COLOR_MAPPING.get(
+  color_reached = env_utils_taxi.LOCATION_TO_COLOR_MAPPING.get(
       (final_taxi_state.row, final_taxi_state.col), None)
 
   # Determine if the passenger is inside the car.
   passenger_inside_car = (
-      final_taxi_state.passenger_status == env_utils.PASSENGER_INSIDE_CAR_STATUS
+      final_taxi_state.passenger_status == env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS
       )
 
   if color_reached is None:
@@ -62,16 +62,16 @@ def is_intent_completed(
     return IntentStatus.incomplete
 
   # At this color, the current intent cannot be completed.
-  if intent_id not in definitions.COLOR_TO_INTENT_MAPPING[color_reached]:
+  if intent_id not in definitions_taxi.COLOR_TO_INTENT_MAPPING[color_reached]:
     return IntentStatus.incomplete
 
   # This intent is supposed to have the passenger inside the car.
-  if (intent_id in definitions.IntentsWithPassengersInside and
+  if (intent_id in definitions_taxi.IntentsWithPassengersInside and
       passenger_inside_car):
     return IntentStatus.complete
 
   # This intent is supposed to have the passenger outside the car.
-  if (intent_id in definitions.IntentsWithPassengersOutside and
+  if (intent_id in definitions_taxi.IntentsWithPassengersOutside and
       not passenger_inside_car):
     if final_taxi_state.passenger_status == color_reached.value:
       # Color must match the passenger status.

@@ -16,7 +16,8 @@
 """Tests for rl."""
 from absl.testing import absltest
 import numpy as np
-from affordances_option_models import env_utils
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.env_utils import env_utils_amidar
 from affordances_option_models import rl
 
 

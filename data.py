@@ -19,9 +19,12 @@ from typing import Dict, List, NamedTuple, Optional, Tuple
 from absl import logging
 import numpy as np
 
-from affordances_option_models import env_utils
-from affordances_option_models import intent_utils
-from affordances_option_models import option_utils
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.env_utils import env_utils_amidar
+from affordances_option_models.intent_utils import intent_utils_taxi
+from affordances_option_models.option_utils import option_utils_taxi
+from affordances_option_models.intent_utils import intent_utils_amidar
+from affordances_option_models.option_utils import option_utils_amidar
 from affordances_option_models import rl
 
 

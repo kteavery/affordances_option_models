@@ -1,35 +1,8 @@
-# Copyright 2021 DeepMind Technologies Limited
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#    http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# ==============================================================================
-
-r"""Utilities to make it easier to work with the taxi environment.
-
-The full description of the environment can be found here
-https://gym.openai.com/envs/Taxi-v2/. The general idea is that the environment
-is a 5x5 grid world with 4 goal locations (represented by `Colors`). The taxi
-can be in any of the 25 states in the world. The passenger can be in one of
-the four goal positions or inside the taxi. The destination represents which
-goal position the passenger needs to be in at the end of the episode. The agent
-controls the taxi and gets +20 for dropping the passenger to the correct goal.
-The agent gets -10 if it drops the passenger to the wrong goal. The agent gets
--1 for each step of the episode.
-"""
 from typing import Any, NamedTuple, Tuple
 import gym
 import numpy as np
 
-from affordances_option_models import definitions
+from affordances_option_models.definitions import definitions_taxi
 
 Colors = definitions.Colors
 PASSENGER_INSIDE_CAR_STATUS = 4
@@ -60,8 +33,8 @@ class TaxiState(NamedTuple):
       raise ValueError('Col must be between (0, 4)')
 
 
-def make_taxi_environment():
-  return gym.make('Taxi-v2').env
+def make_space_invaders_environment():
+  return gym.make('SpaceInvaders').env
 
 
 _GLOBAL_ENV = make_taxi_environment()

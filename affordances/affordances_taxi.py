@@ -18,8 +18,8 @@ from typing import Callable, List, Tuple
 from absl import logging
 import numpy as np
 
-from affordances_option_models import definitions
-from affordances_option_models import env_utils
+from affordances_option_models.definitions import definitions_taxi
+from affordances_option_models.env_utils import env_utils_taxi
 
 
 State = int

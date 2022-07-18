@@ -29,14 +29,15 @@ from absl import logging
 import launchpad as lp
 import numpy as np
 
-from affordances_option_models import option_utils
+from affordances_option_models.option_utils import option_utils_taxi
+from affordances_option_models.option_utils import option_utils_amidar
 from affordances_option_models import task_queue
 
 
 FLAGS = flags.FLAGS
 _SEED = 1
 flags.DEFINE_integer(
-    'num_consumers', len(option_utils.Options),
+    'num_consumers', len(option_utils_taxi.Options),
     'Number of CPU workers per program.')
 flags.DEFINE_float('gamma', 0.99, 'Discount factor for training the options.')
 flags.DEFINE_string(
@@ -44,14 +45,22 @@ flags.DEFINE_string(
 flags.DEFINE_integer(
     'max_iterations', 1000,
     'Maximum number of iterations to run the value iteration.')
+flags.DEFINE_string(
+    "env", "Taxi", 'Gym or Toybox environment. Options include Taxi (gym) or Amidar (Toybox)')
 
 
-def make_writer(program_stopper):
+def make_writer(program_stopper, env):
   """Creates a writer node to write all options to a queue.."""
   def writer(queue):
     logging.info('Writer has started.')
     future_to_task_key = {}
-    for task_key, option in enumerate(option_utils.Options):
+
+    if env == "Taxi":
+      options = option_utils_taxi.Options
+    else:
+      options = option_utils_amidar.Options
+
+    for task_key, option in enumerate(options):
       task_key = str(task_key)
       task_parameters = {'option': option}
       future = queue.enqueue_task(task_key, task_parameters)
@@ -65,7 +74,7 @@ def make_writer(program_stopper):
   return writer
 
 
-def make_consumer(gamma, max_iterations, topic_name, save_path):
+def make_consumer(gamma, max_iterations, topic_name, save_path, env):
   """Makes the function that consumes the queue."""
   save_path = os.path.join(
       save_path,
@@ -79,15 +88,21 @@ def make_consumer(gamma, max_iterations, topic_name, save_path):
   def consumer(queue):
     logging.info('Starting consumer.')
     time.sleep(5.0)  # Wait until the writer adds all the tasks.
+
+    if env == "Taxi":
+      options = option_utils_taxi.Options
+    else:
+      options = option_utils_amidar.Options
+
     while not queue.closed():
       try:
         time.sleep(1.0)
         task_key, task_params = queue.get_task(topic_name)
         logging.info('Task obtained: %s with params: %s', task_key, task_params)
         option = task_params['option']
-        if option not in option_utils.Options:
+        if option not in options:
           raise ValueError(
-              f'Got the option: {option}. Expected: {option_utils.Options}')
+              f'Got the option: {option}. Expected: {options}')
 
         option_policy, num_iters = option_utils.learn_option_policy(
             option,
@@ -112,11 +127,16 @@ def make_consumer(gamma, max_iterations, topic_name, save_path):
   return consumer
 
 
-def _make_program(gamma, max_iterations, save_path, num_consumers=1):
+def _make_program(gamma, max_iterations, save_path, num_consumers=1, env):
   """Creates the launchpad program."""
   program = lp.Program('option_learning')
   program_stopper = lp.make_program_stopper(FLAGS.lp_launch_type)
   topic_name = 'default'
+
+  if env == "Taxi":
+    option_utils = option_utils_taxi
+  else:
+    option_utils = option_utils_amidar
 
   ##############################
   #       Task Queue           #
@@ -143,7 +163,7 @@ def _make_program(gamma, max_iterations, save_path, num_consumers=1):
       raise ValueError('Cannot have more consumers than options!')
     for _ in range(num_consumers):
       program.add_node(lp.PyNode(make_consumer(
-          gamma, max_iterations, topic_name, save_path), queue.reader()))
+          gamma, max_iterations, topic_name, save_path, env), queue.reader()))
 
   return program
 
@@ -154,7 +174,8 @@ def main(_):
       FLAGS.gamma,
       FLAGS.max_iterations,
       FLAGS.save_path,
-      FLAGS.num_consumers)
+      FLAGS.num_consumers,
+      FLAGS.env)
 
   lp.launch(program)
 

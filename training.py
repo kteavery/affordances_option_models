@@ -20,7 +20,8 @@ from absl import logging
 import numpy as np
 import tensorflow as tf
 
-from affordances_option_models import affordances
+from affordances_option_models.affordances import affordances_taxi
+from affordances_option_models.affordances import affordances_amidar
 
 NestedTensor = Union[tf.Tensor, List[tf.Tensor]]
 OptimizationStep = Callable[[NestedTensor], Dict[str, tf.Tensor]]
@@ -59,7 +60,7 @@ def get_training_steps(
     model_optimizer: tf.keras.optimizers.Optimizer,  # pytype: disable=attribute-error
     affordance_network: Optional[tf.keras.Model] = None,  # pytype: disable=attribute-error
     affordance_optimizer: Optional[tf.keras.optimizers.Optimizer] = None,  # pytype: disable=attribute-error
-    heuristic_affordance_fn: Optional[affordances.AffordancesFn] = None,
+    heuristic_affordance_fn = None,
     affordance_mask_threshold: float = 0.5,
     use_learned_affordances: bool = False,
 ) -> Tuple[OptimizationStep, OptimizationStep]:

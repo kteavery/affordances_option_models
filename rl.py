@@ -20,8 +20,10 @@ from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 from absl import logging
 import numpy as np
 
-from affordances_option_models import affordances
-from affordances_option_models import env_utils
+from affordances_option_models.affordances import affordances_taxi
+from affordances_option_models.affordances import affordances_amidar
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.env_utils import env_utils_amidar
 
 DEFAULT_GAMMA = 0.99
 
@@ -69,7 +71,7 @@ def extract_greedy_policy(
     values: np.ndarray,
     gamma: Union[float, np.ndarray] = DEFAULT_GAMMA,
     seed: Optional[int] = None,
-    affordances_fn: Optional[affordances.AffordancesFn] = None,
+    affordances_fn = None,
     ) -> np.ndarray:
   """Returns a table containing the best greedy actions to take."""
   rng = np.random.default_rng(seed)
@@ -99,7 +101,7 @@ def value_iteration(
     gamma: Union[float, np.ndarray] = DEFAULT_GAMMA,
     stopping_threshold: float = 0.0001,
     max_iterations: int = 100,
-    affordances_fn: Optional[affordances.AffordancesFn] = None,
+    affordances_fn = None,
     writer=None,
     ) -> Tuple[np.ndarray, datetime.timedelta, int]:
   """Obtains the optimal policy for an MDP using value iteration.

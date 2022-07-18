@@ -40,11 +40,14 @@ import tensorflow_probability as tfp
 
 from affordances_option_models import affordances
 from affordances_option_models import data as data_tools
-from affordances_option_models import definitions
-from affordances_option_models import env_utils
+from affordances_option_models.definitions import definitions_taxi
+from affordances_option_models.definitions import definitions_amidar
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.env_utils import env_utils_amidar
 from affordances_option_models import hrl
 from affordances_option_models import networks
-from affordances_option_models import option_utils
+from affordances_option_models.option_utils import option_utils_taxi
+from affordances_option_models.option_utils import option_utils_amidar
 from affordances_option_models import task_queue
 from affordances_option_models import training
 
@@ -66,8 +69,7 @@ def _np_load(load_path: str) -> np.ndarray:
 
 @functools.lru_cache(maxsize=1)
 def _load_options(
-    path_to_options: str, debugging: bool = False
-    ) -> Dict[definitions.Options, np.ndarray]:
+    path_to_options: str, debugging: bool = False):
   """Loads options into a table."""
   option_policy_table = {}
   for option_id in option_utils.Options:
@@ -141,7 +143,8 @@ def _make_option_model_table(
 
 def _make_affordance_table(
     affordance_network: tf.keras.Model,
-    affordance_mask_threshold: float,
+    affordance_mask_threshold: float, 
+    env,
     ) -> np.ndarray:
   """Creates an affordance to be used in value iteration.
 
@@ -158,9 +161,16 @@ def _make_affordance_table(
       which intents are affordable.
   """
   logging.info('Creating affordance table.')
-  num_states = env_utils.NUM_STATES
-  num_options = len(option_utils.Options)
-  num_intents = len(definitions.Intents)
+
+  if env == "Taxi":
+    num_intents = len(definitions_taxi.Intents)
+    num_states = env_utils_taxi.NUM_STATES
+    num_options = len(option_utils_taxi.Options)
+  else:
+    num_intents = len(definitions_amidar.Intents)
+    num_states = env_utils_amidar.NUM_STATES
+    num_options = len(option_utils_amidar.Options)
+  
   # Get s_t, o_t pairs for every entry in the affordance matrix.
   s_t, o_t = list(zip(*list(
       itertools.product(range(num_states), range(num_options)))))

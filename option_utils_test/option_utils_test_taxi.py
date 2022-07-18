@@ -17,15 +17,15 @@
 
 from absl.testing import absltest
 from absl.testing import parameterized
-from affordances_option_models import definitions
-from affordances_option_models import env_utils
-from affordances_option_models import option_utils
+from affordances_option_models.definitions import definitions_taxi
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.option_utils import option_utils_taxi
 
 Options = option_utils.Options
 OptionsAny = option_utils.OptionsAny
 OptionsDropping = option_utils.OptionsDropping
 OptionsPicking = option_utils.OptionsPicking
-ActionMap = definitions.ActionMap
+ActionMap = definitions_taxi.ActionMap
 
 
 class OptionUtilsTest(parameterized.TestCase):
@@ -42,7 +42,7 @@ class OptionUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'GoTo 0 passenger inside. Dropping',
           'option': Options.GoTo0_Any,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'action': ActionMap.DROP,
@@ -51,7 +51,7 @@ class OptionUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'GoTo 0 passenger inside. Picking',
           'option': Options.GoTo0_Any,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'action': ActionMap.PICKUP,
@@ -109,7 +109,7 @@ class OptionUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Drop passenger in taxi at 0',
           'option': Options.GoTo0_Drop,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'action': ActionMap.DROP,
@@ -136,7 +136,7 @@ class OptionUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Drop passenger in vehicle at (0, 2)',
           'option': Options.GoTo2_Drop,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 2,
           'action': ActionMap.DROP,
@@ -146,7 +146,7 @@ class OptionUtilsTest(parameterized.TestCase):
           'testcase_name':
               'Fail Drop passenger in vehicle at (0, 1) when at (0, 2)',
           'option': Options.GoTo1_Drop,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 2,
           'action': ActionMap.DROP,
@@ -159,7 +159,7 @@ class OptionUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Cannot pickup when action is move.',
           'option': Options.GoTo0_Pickup,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'action': ActionMap.WEST,
@@ -168,7 +168,7 @@ class OptionUtilsTest(parameterized.TestCase):
       {
           'testcase_name': 'Fail to pickup passenger already inside.',
           'option': Options.GoTo0_Pickup,
-          'passenger_status': env_utils.PASSENGER_INSIDE_CAR_STATUS,
+          'passenger_status': env_utils_taxi.PASSENGER_INSIDE_CAR_STATUS,
           'row': 0,
           'col': 0,
           'action': ActionMap.PICKUP,
@@ -196,8 +196,8 @@ class OptionUtilsTest(parameterized.TestCase):
   def test_check_option_termination(
       self, row, col, passenger_status, action, option, outcome):
 
-    taxi_state = env_utils.state_to_int_fn(
-        env_utils.TaxiState(row, col, passenger_status, 0))
+    taxi_state = env_utils_taxi.state_to_int_fn(
+        env_utils_taxi.TaxiState(row, col, passenger_status, 0))
 
     self.assertEqual(
         option_utils.check_option_termination(taxi_state, action, option),

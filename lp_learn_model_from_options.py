@@ -44,8 +44,10 @@ from acme.utils import loggers
 import launchpad as lp
 
 from affordances_option_models import custom_nodes
-from affordances_option_models import env_utils
-from affordances_option_models import option_utils
+from affordances_option_models.env_utils import env_utils_taxi
+from affordances_option_models.option_utils import option_utils_taxi
+from affordances_option_models.env_utils import env_utils_amidar
+from affordances_option_models.option_utils import option_utils_amidar
 from affordances_option_models import task_queue
 
 
