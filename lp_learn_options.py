@@ -90,9 +90,9 @@ def make_consumer(gamma, max_iterations, topic_name, save_path, env):
     time.sleep(5.0)  # Wait until the writer adds all the tasks.
 
     if env == "Taxi":
-      options = option_utils_taxi.Options
+      option_utils = option_utils_taxi
     else:
-      options = option_utils_amidar.Options
+      option_utils = option_utils_amidar
 
     while not queue.closed():
       try:
@@ -100,9 +100,9 @@ def make_consumer(gamma, max_iterations, topic_name, save_path, env):
         task_key, task_params = queue.get_task(topic_name)
         logging.info('Task obtained: %s with params: %s', task_key, task_params)
         option = task_params['option']
-        if option not in options:
+        if option not in option_utils:
           raise ValueError(
-              f'Got the option: {option}. Expected: {options}')
+              f'Got the option: {option}. Expected: {option_utils}')
 
         option_policy, num_iters = option_utils.learn_option_policy(
             option,
@@ -127,7 +127,7 @@ def make_consumer(gamma, max_iterations, topic_name, save_path, env):
   return consumer
 
 
-def _make_program(gamma, max_iterations, save_path, num_consumers=1, env):
+def _make_program(gamma, max_iterations, save_path, env, num_consumers=1):
   """Creates the launchpad program."""
   program = lp.Program('option_learning')
   program_stopper = lp.make_program_stopper(FLAGS.lp_launch_type)

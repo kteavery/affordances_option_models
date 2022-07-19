@@ -20,26 +20,25 @@ from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple
 from absl import logging
 
 from affordances_option_models.env_utils import env_utils_taxi
-from affordances_option_models.option_utils import option_utils_taxi
 from affordances_option_models.env_utils import env_utils_amidar
+from affordances_option_models.option_utils import option_utils_taxi
 from affordances_option_models.option_utils import option_utils_amidar
 from affordances_option_models import rl
 
-Options = option_utils.Options
 Statistics = Dict[str, Any]
 
 
 class TransitionWithOption(NamedTuple):
   transition: rl.Transition
-  option_id: Options
+  option_id
 
 
 TrajectoryWithOption = List[TransitionWithOption]
 
 
 def run_hrl_policy_in_env(
-    option_policy: Callable[[int, Options], int],
-    policy_over_options: Callable[[int], Options],
+    option_policy,
+    policy_over_options,
     option_term_fn: Callable[[TransitionWithOption], bool],
     max_option_length: int,
     num_episodes: int = 1000,
@@ -48,9 +47,13 @@ def run_hrl_policy_in_env(
     seed: Optional[int] = None,
     ) -> Tuple[List[TrajectoryWithOption], List[int], List[float], Statistics]:
   """Executes policy in the environment."""
+  if env == "Taxi":
+    env_utils = env_utils_taxi
+  else:
+    env_utils = env_utils_amidar
 
-  env = env_utils.make_taxi_environment()
-  env.seed(seed)
+  environment = env_utils.make_taxi_environment()
+  environment.seed(seed)
 
   trajectories = []
   lengths = []
@@ -64,13 +67,13 @@ def run_hrl_policy_in_env(
 
   for _ in range(num_episodes):
     episode_reward, episode_length, reward, num_options = 0, 0, 0, 0
-    state = env.reset()
+    state = environment.reset()
     if initial_state is not None:
-      env.s = initial_state
-      state = env.s
-      logging.debug('State set to %s', env.s)
+      environment.s = initial_state
+      state = environment.s
+      logging.debug('State set to %s', environment.s)
     else:
-      state = env.reset()
+      state = environment.reset()
 
     transitions = []
 
@@ -83,7 +86,7 @@ def run_hrl_policy_in_env(
       for i in range(max_option_length):
         # Execute the option in the environment.
         action = option_policy(state, option_id)
-        new_state, reward, done, _ = env.step(action)
+        new_state, reward, done, _ = environment.step(action)
 
         logging.debug(
             ('New transition: \n\t'

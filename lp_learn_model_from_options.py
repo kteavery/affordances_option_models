@@ -45,8 +45,8 @@ import launchpad as lp
 
 from affordances_option_models import custom_nodes
 from affordances_option_models.env_utils import env_utils_taxi
-from affordances_option_models.option_utils import option_utils_taxi
 from affordances_option_models.env_utils import env_utils_amidar
+from affordances_option_models.option_utils import option_utils_taxi
 from affordances_option_models.option_utils import option_utils_amidar
 from affordances_option_models import task_queue
 
@@ -73,6 +73,7 @@ _GLOBAL_SEED = 424242
 
 
 def make_trainer_node(
+    env: str,
     model_learning_rate: float,
     stop_after_steps: int,
     hidden_dims: int,
@@ -85,6 +86,13 @@ def make_trainer_node(
     topic_name: str = 'default',
     ):
   """Creates a training node to learn the models."""
+  if env == "Taxi":
+    option_utils = option_utils_taxi
+    env_utils = env_utils_taxi
+  else:
+    option_utils = option_utils_amidar
+    env_utils = env_utils_amidar
+
   def trainer_node(queue):
 
     logging.info('Beginning training...')

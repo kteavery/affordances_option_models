@@ -69,8 +69,13 @@ def _np_load(load_path: str) -> np.ndarray:
 
 @functools.lru_cache(maxsize=1)
 def _load_options(
-    path_to_options: str, debugging: bool = False):
+    env, path_to_options: str, debugging: bool = False):
   """Loads options into a table."""
+  if env == "Taxi":
+    option_utils = option_utils_taxi
+  else:
+    option_utils = option_utils_amidar
+
   option_policy_table = {}
   for option_id in option_utils.Options:
     load_path = os.path.join(path_to_options, option_id.name + '.npz')
@@ -90,7 +95,7 @@ def _load_options(
 
 
 def _make_option_model_table(
-    model_network: tf.keras.Model) -> Dict[str, np.ndarray]:
+    env, model_network: tf.keras.Model) -> Dict[str, np.ndarray]:
   """Creates option model table to be used in value iteration.
 
   Args:
@@ -110,6 +115,11 @@ def _make_option_model_table(
   # We create a tabular option model here for every state and option pair in
   # the environment. This can then be plugged into value iteration or other
   # planning algorithm to obtain a policy over options.
+  if env == "Taxi":
+    option_utils = option_utils_taxi
+  else:
+    option_utils = option_utils_amidar
+
   logging.info('Creating option model table.')
   num_states = env_utils.NUM_STATES
   num_options = len(option_utils.Options)

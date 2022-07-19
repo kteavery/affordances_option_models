@@ -41,8 +41,12 @@ Trajectory = List[Transition]
 
 
 def _compute_q_v(
-    reward_matrix, gamma, transition_matrix, values, affordance_mask=None):
+    env, reward_matrix, gamma, transition_matrix, values, affordance_mask=None):
   """Computes Q-value."""
+  if env == "Taxi":
+    env_utils = env_utils_taxi
+  else:
+    env_utils = env_utils_amidar
 
   # All transitions out of the goal state should be masked out since you cannot
   # actually _start_ your trajectories here and the environment terminates once

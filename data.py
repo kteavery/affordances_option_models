@@ -44,7 +44,8 @@ class OptionTransition(NamedTuple):
 
 
 def get_trajectories(
-    option_policies: Dict[option_utils.Options, np.ndarray],
+    option_policies,
+    env,
     num_trajectories: int = 1,
     max_trajectory_length: int = 12,
     affordances_mask: Optional[np.ndarray] = None,
@@ -75,6 +76,11 @@ def get_trajectories(
        needed to learn a model.
     2. An integer representing the total steps taken in the environment.
   """
+  if env == "Taxi":
+    option_utils = option_utils_taxi
+  else:
+    option_utils = option_utils_amidar
+
   rng = np.random.default_rng(seed)
   def rargmax(arr):
     """Random argmax with stochastic tie-breaking."""
