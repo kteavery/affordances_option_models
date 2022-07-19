@@ -171,7 +171,7 @@ def learn_policy_over_options(
     stopping_threshold: float = 0.0001,
     max_iterations: int = 10000,
     seed: Optional[int] = None,
-    affordances_fn: Optional[affordances.AffordancesFn] = None,
+    affordances_fn: Optional[affordances_taxi.AffordancesFn] = None,
     writer=None,
     ) -> Tuple[np.ndarray, int]:
   """Learns the policy over option policies.
