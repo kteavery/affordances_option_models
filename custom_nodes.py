@@ -38,7 +38,8 @@ import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-from affordances_option_models import affordances
+from affordances_option_models.affordances import affordances_taxi
+from affordances_option_models.affordances import affordances_amidar
 from affordances_option_models import data as data_tools
 from affordances_option_models.definitions import definitions_taxi
 from affordances_option_models.definitions import definitions_amidar
