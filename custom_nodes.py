@@ -281,7 +281,7 @@ def _save_models_and_weights(
 def _get_affordances_function(
     affordances_name: str,
     trainer_node: Optional['Trainer'],
-    ) -> affordances.AffordancesFn:
+    ):
   """Wraps heuristic and learned affordance setup to make them interoperable.
 
   Args:
