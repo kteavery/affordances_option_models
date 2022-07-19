@@ -100,7 +100,7 @@ def make_consumer(env, gamma, max_iterations, topic_name, save_path):
         task_key, task_params = queue.get_task(topic_name)
         logging.info('Task obtained: %s with params: %s', task_key, task_params)
         option = task_params['option']
-        if option not in option_utils:
+        if option not in option_utils.Options:
           raise ValueError(
               f'Got the option: {option}. Expected: {option_utils}')
 
