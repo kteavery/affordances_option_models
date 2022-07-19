@@ -103,6 +103,7 @@ def make_trainer_node(
     log_writer = loggers.GatedFilter.periodic(log_writer, 10)
 
     trainer = custom_nodes.Trainer(
+        env=env,
         num_states=env_utils.NUM_STATES,
         num_options=len(option_utils.Options),
         hidden_dims=hidden_dims,
@@ -124,6 +125,7 @@ def make_trainer_node(
 
 
 def make_evaluation_node(
+    env,
     path_to_options,
     gamma,
     max_iterations,
@@ -141,6 +143,7 @@ def make_evaluation_node(
     log_writer = loggers.GatedFilter.periodic(log_writer, 10)
 
     evaluation = custom_nodes.Evaluation(
+        env=env,
         path_to_options=path_to_options,
         affordances_name=affordances_name,
         gamma=gamma,
@@ -217,6 +220,7 @@ def _make_program(env: str,
     for evaluation_affordance_name in affordance_types:
       evaluation_node = lp.CourierNode(
           make_evaluation_node(
+              env=env,
               path_to_options=path_to_options,
               gamma=0.99,
               max_iterations=max_iterations_for_value_iter,
