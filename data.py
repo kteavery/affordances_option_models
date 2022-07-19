@@ -44,8 +44,8 @@ class OptionTransition(NamedTuple):
 
 
 def get_trajectories(
-    option_policies,
     env,
+    option_policies,
     num_trajectories: int = 1,
     max_trajectory_length: int = 12,
     affordances_mask: Optional[np.ndarray] = None,

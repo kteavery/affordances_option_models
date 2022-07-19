@@ -70,7 +70,7 @@ def _np_load(load_path: str) -> np.ndarray:
 
 @functools.lru_cache(maxsize=1)
 def _load_options(
-    env, path_to_options: str, debugging: bool = False):
+    env: str, path_to_options: str, debugging: bool = False):
   """Loads options into a table."""
   if env == "Taxi":
     option_utils = option_utils_taxi
@@ -96,7 +96,7 @@ def _load_options(
 
 
 def _make_option_model_table(
-    env, model_network: tf.keras.Model) -> Dict[str, np.ndarray]:
+    env: str, model_network: tf.keras.Model) -> Dict[str, np.ndarray]:
   """Creates option model table to be used in value iteration.
 
   Args:
@@ -153,9 +153,9 @@ def _make_option_model_table(
 
 
 def _make_affordance_table(
+    env: str,
     affordance_network: tf.keras.Model,
     affordance_mask_threshold: float, 
-    env,
     ) -> np.ndarray:
   """Creates an affordance to be used in value iteration.
 
@@ -241,6 +241,7 @@ def _save_hrl_tables(
 
 
 def _save_models_and_weights(
+    env: str, 
     num_trajectories: int,
     num_steps: int,
     model_network: tf.keras.Model,
@@ -259,7 +260,7 @@ def _save_models_and_weights(
 
   os.makedirs(save_dir)
 
-  option_model_table = _make_option_model_table(model_network)
+  option_model_table = _make_option_model_table(env, model_network)
   save_path = f'{save_dir}/option_model_table.npz'
   logging.info('Creating and saving option model to %s.', save_path)
   _np_save(save_path, option_model_table)
@@ -309,6 +310,7 @@ class Trainer:
 
   def __init__(
       self, *,
+      env: str,
       num_states: int,
       num_options: int,
       hidden_dims: int,
@@ -333,6 +335,7 @@ class Trainer:
         hidden_dims)
     self._model_optimizer = tf.keras.optimizers.Adam(
         learning_rate=model_learning_rate)
+    self.env = env
 
     if use_learned_affordances:
       # When learning affordances, we learn a specialized affordance network
@@ -382,7 +385,7 @@ class Trainer:
     total_trajectories = 0
     time.sleep(5)  # Give time for things to fire up.
     _save_models_and_weights(
-        total_trajectories, self._total_steps, self._model_network,
+        self.env, total_trajectories, self._total_steps, self._model_network,
         self._save_dir, affordance_network=self._affordance_network)
     while not self._queue.empty():
       try:
@@ -416,7 +419,7 @@ class Trainer:
 
         if self._total_steps - self._last_save > self._save_every:
           _save_models_and_weights(
-              total_trajectories, self._total_steps, self._model_network,
+              self.env, total_trajectories, self._total_steps, self._model_network,
               self._save_dir, self._affordance_network)
           self._last_save = self._total_steps
 
@@ -432,14 +435,14 @@ class Trainer:
   def get_option_model_table(self):
     logging.info('Get option model has been requested!')
     return (
-        _make_option_model_table(self._model_network),
+        _make_option_model_table(self.env, self._model_network),
         self._total_steps)
 
   def get_affordance_table(self):
     logging.info('Affordances requested.')
     return {
         'affordances': _make_affordance_table(
-            self._affordance_network, self._affordances_threshold)
+            self.env, self._affordance_network, self._affordances_threshold)
     }
 
 
@@ -450,6 +453,7 @@ class Evaluation:
 
   def __init__(
       self, *,
+      env: str,
       path_to_options: str,
       affordances_name: str,
       gamma: float,
@@ -474,9 +478,10 @@ class Evaluation:
     self._last_save = None
     self._save_dir = save_path
     self._num_eval_episodes = num_eval_episodes
+    self.env = env
 
   def _get_latest_options(self):
-    return _load_options(self._path_to_options)
+    return _load_options(self.env, self._path_to_options)
 
   def _get_latest_option_model(self):
     """Returns latest option model from relevant source."""
@@ -502,6 +507,7 @@ class Evaluation:
     affordances_mask = affordances_fn()
 
     policy_over_options_table, num_iters = option_utils.learn_policy_over_options(
+        env=self.env,
         option_reward=option_model_table['rewards'],
         option_transition=option_model_table['transitions'].copy(),
         option_length=option_model_table['lengths'],
@@ -547,6 +553,7 @@ class Evaluation:
     for option_length in self._OPTION_LENGTHS_TO_EVAL:
       logging.info('running policy with option length = %s', option_length)
       _, _, _, rollout_statistics = hrl.run_hrl_policy_in_env(
+          env=self.env,
           option_policy=option_policy,
           policy_over_options=policy_over_options,
           option_term_fn=option_term_fn,
@@ -593,6 +600,7 @@ class Rollout:
 
   def __init__(
       self, *,
+      env: str,
       global_seed: int,
       max_option_length: int,
       batch_size: int,
@@ -607,13 +615,14 @@ class Rollout:
     self._path_to_options = path_to_options
     self._affordances_name = affordances_name
     self._queue_writer = queue_writer
+    self.env = env
     if affordances_name == 'learned':
       self._trainer_node = trainer_node
     else:
       self._trainer_node = None
 
   def _get_option_table(self):
-    return _load_options(self._path_to_options)
+    return _load_options(self.env, self._path_to_options)
 
   def run(self):
     """Runs the rollout node to collect data."""
@@ -634,6 +643,7 @@ class Rollout:
         running_time = time.time()
         affordances_mask = affordances_fn()
         data, total_steps = data_tools.get_trajectories(
+            env=self.env,
             num_trajectories=self._batch_size,
             max_trajectory_length=self._max_option_length,
             option_policies=option_policy_table,

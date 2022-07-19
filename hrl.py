@@ -37,6 +37,7 @@ TrajectoryWithOption = List[TransitionWithOption]
 
 
 def run_hrl_policy_in_env(
+    env: str,
     option_policy,
     policy_over_options,
     option_term_fn: Callable[[TransitionWithOption], bool],

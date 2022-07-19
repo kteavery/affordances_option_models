@@ -153,7 +153,8 @@ def make_evaluation_node(
   return evaluation_node
 
 
-def _make_program(model_learning_rate: float,
+def _make_program(env: str,
+                  model_learning_rate: float,
                   stop_after_steps: int,
                   batch_size: int,
                   path_to_options: str,
@@ -185,6 +186,7 @@ def _make_program(model_learning_rate: float,
   with program.group('trainer'):
     trainer_node = lp.CourierNode(
         make_trainer_node(
+            env=env,
             model_learning_rate=model_learning_rate,
             stop_after_steps=stop_after_steps,
             hidden_dims=hidden_dims,
@@ -274,6 +276,7 @@ def main(_):
 
   program_config = get_config()
   program = _make_program(
+      env=FLAGS.env,
       path_to_options=FLAGS.path_to_options,
       num_rollout_nodes=FLAGS.num_rollout_nodes,
       affordances_name=FLAGS.affordances_name,

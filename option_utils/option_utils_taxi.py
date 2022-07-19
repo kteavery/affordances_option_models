@@ -125,6 +125,7 @@ def compute_per_step_matrices_for_option_learning(
 
 
 def learn_option_policy(
+    env: str,
     option: Options,
     gamma: float = rl.DEFAULT_GAMMA,
     stopping_threshold: float = 0.0001,
@@ -152,18 +153,20 @@ def learn_option_policy(
   b_option = np.expand_dims(b_option, -1)
   masked_transition_matrix = b_option * _TRANSITION_MATRIX
   V_star, _, num_iters = rl.value_iteration(  # pylint: disable=invalid-name
+      env=env,
       reward_matrix=r_option,
       transition_matrix=masked_transition_matrix,
       max_iterations=max_iterations,
       stopping_threshold=stopping_threshold,
       gamma=gamma)
   pi_star = rl.extract_greedy_policy(
-      r_option, masked_transition_matrix, V_star, gamma=gamma, seed=seed)
+      env, r_option, masked_transition_matrix, V_star, gamma=gamma, seed=seed)
 
   return pi_star, num_iters
 
 
 def learn_policy_over_options(
+    env: str, 
     option_reward: np.ndarray,
     option_transition: np.ndarray,
     option_length: np.ndarray,
@@ -220,6 +223,7 @@ def learn_policy_over_options(
         f'Expected {(num_states, num_options)}')
 
   V_star, _, num_iters = rl.value_iteration(  # pylint: disable=invalid-name
+      env=env,
       reward_matrix=option_reward,
       transition_matrix=option_transition,
       max_iterations=max_iterations,
@@ -228,7 +232,7 @@ def learn_policy_over_options(
       gamma=gamma,
       writer=writer)
   pi_star = rl.extract_greedy_policy(
-      option_reward, option_transition, V_star, gamma=gamma, seed=seed,
+      env, option_reward, option_transition, V_star, gamma=gamma, seed=seed,
       affordances_fn=affordances_fn)
 
   return pi_star, num_iters

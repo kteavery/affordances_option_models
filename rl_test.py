@@ -32,8 +32,8 @@ class RlTest(absltest.TestCase):
         env_utils = env_utils_amidar
 
     _, P_matrix, R_matrix = env_utils.get_transition_and_reward_matrices()  # pylint: disable=invalid-name
-    bad_values, _, _ = rl.value_iteration(R_matrix, P_matrix, max_iterations=1)
-    pi_bad = rl.extract_greedy_policy(R_matrix, P_matrix, bad_values, seed=1)
+    bad_values, _, _ = rl.value_iteration(env, R_matrix, P_matrix, max_iterations=1)
+    pi_bad = rl.extract_greedy_policy(env, R_matrix, P_matrix, bad_values, seed=1)
 
     _, lengths, rewards = rl.run_policy_in_env(
         lambda s: np.argmax(pi_bad[s]),
@@ -47,8 +47,8 @@ class RlTest(absltest.TestCase):
 
     # Obtain a good policy in the environment.
     bad_values, _, num_iterations = rl.value_iteration(
-        R_matrix, P_matrix, max_iterations=10000)
-    pi_good = rl.extract_greedy_policy(R_matrix, P_matrix, bad_values, seed=1)
+        env, R_matrix, P_matrix, max_iterations=10000)
+    pi_good = rl.extract_greedy_policy(env, R_matrix, P_matrix, bad_values, seed=1)
 
     _, lengths, rewards = rl.run_policy_in_env(
         lambda s: np.argmax(pi_good[s]),

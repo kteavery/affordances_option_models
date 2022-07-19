@@ -70,6 +70,7 @@ def _compute_q_v(
 
 
 def extract_greedy_policy(
+    env: str,
     reward_matrix: np.ndarray,
     transition_matrix: np.ndarray,
     values: np.ndarray,
@@ -85,7 +86,7 @@ def extract_greedy_policy(
   else:
     affordances_mask = None
   q_values, _, _ = _compute_q_v(
-      reward_matrix, gamma, transition_matrix, values, affordances_mask)
+      env, reward_matrix, gamma, transition_matrix, values, affordances_mask)
 
   # Use "random" argmax with stochastic tie-breaking:
   rargmax = lambda arr: rng.choice(np.flatnonzero(arr))
@@ -100,6 +101,7 @@ def extract_greedy_policy(
 
 
 def value_iteration(
+    env: str,
     reward_matrix: np.ndarray,
     transition_matrix: np.ndarray,
     gamma: Union[float, np.ndarray] = DEFAULT_GAMMA,
@@ -142,7 +144,7 @@ def value_iteration(
     affordances_mask = None
   for i in range(max_iterations):
     _, values, value_diff = _compute_q_v(
-        reward_matrix, gamma, transition_matrix, values, affordances_mask)
+        env, reward_matrix, gamma, transition_matrix, values, affordances_mask)
     if writer is not None:
       writer.write({
           'iteration': i, 'max_value': np.max(values),
@@ -161,6 +163,7 @@ def value_iteration(
 
 
 def run_policy_in_env(
+    env: str, 
     policy: Callable[[int], int],
     num_episodes: int = 1000,
     max_steps_per_episode: int = 1000,
@@ -170,8 +173,13 @@ def run_policy_in_env(
     ) -> Tuple[List[Trajectory], List[int], List[float]]:
   """Executes policy in the environment."""
 
-  env = env_utils.make_taxi_environment()
-  env.seed(seed)
+  if env == "Taxi":
+    env_utils = env_utils_taxi
+  else:
+    env_utils = env_utils_amidar
+
+  environment = env_utils.make_taxi_environment()
+  environment.seed(seed)
   total_steps, total_pickups, total_illegal, total_reward = 0, 0, 0, 0
 
   trajectories = []
@@ -180,18 +188,18 @@ def run_policy_in_env(
 
   for _ in range(num_episodes):
     episode_reward, episode_length, reward = 0, 0, 0
-    state = env.reset()
+    state = environment.reset()
     if initial_state is not None:
-      env.s = initial_state
-      state = env.s
-      logging.debug('State set to %s', env.s)
+      environment.s = initial_state
+      state = environment.s
+      logging.debug('State set to %s', environment.s)
     else:
-      state = env.reset()
+      state = environment.reset()
 
     transitions = []
     for _ in range(max_steps_per_episode):
       action = policy(state)
-      new_state, reward, done, _ = env.step(action)
+      new_state, reward, done, _ = environment.step(action)
 
       logging.debug(
           ('New transition: \n\t'

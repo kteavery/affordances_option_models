@@ -49,7 +49,7 @@ flags.DEFINE_string(
     "env", "Taxi", 'Gym or Toybox environment. Options include Taxi (gym) or Amidar (Toybox)')
 
 
-def make_writer(program_stopper, env):
+def make_writer(env, program_stopper):
   """Creates a writer node to write all options to a queue.."""
   def writer(queue):
     logging.info('Writer has started.')
@@ -74,7 +74,7 @@ def make_writer(program_stopper, env):
   return writer
 
 
-def make_consumer(gamma, max_iterations, topic_name, save_path, env):
+def make_consumer(env, gamma, max_iterations, topic_name, save_path):
   """Makes the function that consumes the queue."""
   save_path = os.path.join(
       save_path,
@@ -85,7 +85,7 @@ def make_consumer(gamma, max_iterations, topic_name, save_path, env):
     os.makedirs(save_path)
   logging.info('Saving to folder: %s', save_path)
 
-  def consumer(queue):
+  def consumer(env, queue):
     logging.info('Starting consumer.')
     time.sleep(5.0)  # Wait until the writer adds all the tasks.
 
@@ -105,6 +105,7 @@ def make_consumer(gamma, max_iterations, topic_name, save_path, env):
               f'Got the option: {option}. Expected: {option_utils}')
 
         option_policy, num_iters = option_utils.learn_option_policy(
+            env,
             option,
             gamma=gamma,
             stopping_threshold=1e-5,
@@ -127,7 +128,7 @@ def make_consumer(gamma, max_iterations, topic_name, save_path, env):
   return consumer
 
 
-def _make_program(gamma, max_iterations, save_path, env, num_consumers=1):
+def _make_program(env, gamma, max_iterations, save_path, num_consumers=1):
   """Creates the launchpad program."""
   program = lp.Program('option_learning')
   program_stopper = lp.make_program_stopper(FLAGS.lp_launch_type)
@@ -150,7 +151,7 @@ def _make_program(gamma, max_iterations, save_path, env, num_consumers=1):
   #     Problems creator       #
   ##############################
   with program.group('writer'):
-    write_to_queue = make_writer(program_stopper)
+    write_to_queue = make_writer(env, program_stopper)
     program.add_node(
         lp.PyNode(write_to_queue, queue.writer()))
 
@@ -163,7 +164,7 @@ def _make_program(gamma, max_iterations, save_path, env, num_consumers=1):
       raise ValueError('Cannot have more consumers than options!')
     for _ in range(num_consumers):
       program.add_node(lp.PyNode(make_consumer(
-          gamma, max_iterations, topic_name, save_path, env), queue.reader()))
+          env, gamma, max_iterations, topic_name, save_path), queue.reader()))
 
   return program
 
@@ -171,11 +172,11 @@ def _make_program(gamma, max_iterations, save_path, env, num_consumers=1):
 def main(_):
 
   program = _make_program(
+      FLAGS.env,
       FLAGS.gamma,
       FLAGS.max_iterations,
       FLAGS.save_path,
-      FLAGS.num_consumers,
-      FLAGS.env)
+      FLAGS.num_consumers)
 
   lp.launch(program)
 
