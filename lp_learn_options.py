@@ -85,7 +85,7 @@ def make_consumer(env, gamma, max_iterations, topic_name, save_path):
     os.makedirs(save_path)
   logging.info('Saving to folder: %s', save_path)
 
-  def consumer(env, queue):
+  def consumer(queue):
     logging.info('Starting consumer.')
     time.sleep(5.0)  # Wait until the writer adds all the tasks.
 
