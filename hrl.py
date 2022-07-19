@@ -30,7 +30,6 @@ Statistics = Dict[str, Any]
 
 class TransitionWithOption(NamedTuple):
   transition: rl.Transition
-  option_id
 
 
 TrajectoryWithOption = List[TransitionWithOption]
