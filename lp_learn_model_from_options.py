@@ -53,6 +53,7 @@ from affordances_option_models import task_queue
 
 ALL_AFFORDANCE_TYPES = [
     'everything', 'only_pickup_drop', 'only_relevant_pickup_drop', 'learned']
+flags.DEFINE_string('env', 'Taxi', 'name of environment')
 flags.DEFINE_integer('num_rollout_nodes', 1, 'Number of rollout nodes.')
 flags.DEFINE_string('path_to_options', None, 'Location to load the options.')
 flags.DEFINE_integer('total_steps', -1, 'Number of steps to do training for.')
