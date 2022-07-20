@@ -21,10 +21,10 @@ from affordances_option_models.definitions import definitions_taxi
 from affordances_option_models.env_utils import env_utils_taxi
 from affordances_option_models.option_utils import option_utils_taxi
 
-Options = option_utils.Options
-OptionsAny = option_utils.OptionsAny
-OptionsDropping = option_utils.OptionsDropping
-OptionsPicking = option_utils.OptionsPicking
+Options = option_utils_taxi.Options
+OptionsAny = option_utils_taxi.OptionsAny
+OptionsDropping = option_utils_taxi.OptionsDropping
+OptionsPicking = option_utils_taxi.OptionsPicking
 ActionMap = definitions_taxi.ActionMap
 
 
@@ -200,7 +200,7 @@ class OptionUtilsTest(parameterized.TestCase):
         env_utils_taxi.TaxiState(row, col, passenger_status, 0))
 
     self.assertEqual(
-        option_utils.check_option_termination(taxi_state, action, option),
+        option_utils_taxi.check_option_termination(taxi_state, action, option),
         outcome)
 
 
