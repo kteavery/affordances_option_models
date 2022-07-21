@@ -9,6 +9,8 @@ from affordances_option_models.env_utils import env_utils_amidar
 from affordances_option_models import rl
 
 Options = definitions_amidar.Options
+OptionsFill = definitions_amidar.Options.OptionsFill
+OptionsEscape = definitions_amidar.Options.OptionsEscape
 
 _TRANSITION_DICT, _TRANSITION_MATRIX = (
     env_utils_amidar.get_transition_and_reward_matrices()[:-1])
@@ -23,7 +25,18 @@ def check_option_termination(
   if option not in Options:
     raise ValueError(
         f'Unknown Option {option}. Valid: {Options.__members__.values()}')
-  continue
+  
+  _, s_tp1, _ = _TRANSITION_DICT[s_t][a_t][0]
+  amidar_row, amidar_col, _ = env_utils_amidar.int_to_state_fn(s_tp1)
+
+  print("option.name: ")
+  print(option.name)
+  grid_idx = option.name
+  grid_row, grid_col = env_utils_amidar.grid_cell_to_xy(grid_idx)
+  if (amidar_row, amidar_col) == (grid_row, grid_col):
+    return True
+  else:
+    return False
 
 
 def compute_per_step_matrices_for_option_learning(

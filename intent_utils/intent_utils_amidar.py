@@ -33,4 +33,15 @@ def is_intent_completed(
     raise ValueError(
         f'Unknown intent_id={intent_id}. See {Intents} for valid intents.')
 
+  junction_reached = env_utils_amidar.LOCATION_TO_JUNCTION_MAPPING.get(
+      (final_amidar_state.row, final_amidar_state.col), None)
+
+  if junction_reached is None:
+    # No junction was reached so the intent could not have been completed.
+    return IntentStatus.incomplete  
+
+  # At this junction, the current intent cannot be completed.
+  if intent_id not in definitions_amidar.JUNCTION_TO_INTENT_MAPPING[junction_reached]:
+    return IntentStatus.incomplete
+
   return IntentStatus.incomplete

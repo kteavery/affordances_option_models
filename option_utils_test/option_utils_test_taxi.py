@@ -31,10 +31,10 @@ ActionMap = definitions_taxi.ActionMap
 class OptionUtilsTest(parameterized.TestCase):
 
   def test_number_of_options(self):
-    self.assertLen(option_utils.Options, 75)
-    self.assertLen(option_utils.OptionsDropping, 25)
-    self.assertLen(option_utils.OptionsPicking, 25)
-    self.assertLen(option_utils.OptionsAny, 25)
+    self.assertLen(option_utils_taxi.Options, 75)
+    self.assertLen(option_utils_taxi.OptionsDropping, 25)
+    self.assertLen(option_utils_taxi.OptionsPicking, 25)
+    self.assertLen(option_utils_taxi.OptionsAny, 25)
 
   @parameterized.named_parameters(
       #   GoToXX_Any:

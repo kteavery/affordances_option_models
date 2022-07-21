@@ -5,11 +5,21 @@ import numpy as np
 from affordances_option_models.definitions import definitions_amidar
 
 
+Junctions = definitions_amidar.Junctions
+
 class AmidarState(NamedTuple):
   """Human readable version of amidar state."""
+  row: int
+  col: int
+  destination: int
 
   def validate(self):
-    continue
+    if self.destination > 86:
+      raise ValueError('Only 87 possible destinations are valid.')
+    if not 0 <= self.row <= 31:
+      raise ValueError('Row must be between (0, 31)')
+    if not 0 <= self.col <= 30: 
+      raise ValueError('Column must be between (0, 30)')
 
 
 def make_amidar_environment():
@@ -32,7 +42,10 @@ def int_to_state_fn(x: int) -> AmidarState:
   state = AmidarState(*_GLOBAL_ENV.decode(x))
   state.validate()
   return state
-  
+
+
+LOCATION_TO_JUNCTION_MAPPING = {v: k for k, v in zip(Junctions.junctions, _GLOBAL_ENV.locs)}
+
 
 def grid_cell_to_xy(pos: int, grid_size: int = 5) -> Tuple[int, int]:
   """Converts an integer from 0-24 into an (x, y) position."""

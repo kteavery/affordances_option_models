@@ -38,8 +38,25 @@ def _all_affs() -> AffordancesList:
   return affordances
 
 
-ALL_AFFORDANCES = {
+def _relevant_affs() -> AffordancesList:
+  """Returns only pickup and drop options that are relevant to the 4 corners."""
+  affordances = []
+  for state in range(env_utils_amidar.NUM_STATES):
+    for option in definitions.Options:
+      print("option.name: ")
+      print(option.name)
+      gridcell = option.name
+      target_location = env_utils_amidar.grid_cell_to_xy(gridcell)
 
+      # The option goes to relevant corners of the world.
+      if target_location in env_utils_amidar.LOCATION_TO_JUNCTION_MAPPING:
+        affordances.append((state, option.value-1))
+  return affordances
+
+
+ALL_AFFORDANCES = {
+    'only_relevant': _relevant_affs,
+    'everything': _all_affs,
 }
 
 

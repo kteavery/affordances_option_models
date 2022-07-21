@@ -16,75 +16,44 @@ ActionMap = definitions_amidar.ActionMap
 class OptionUtilsTest(parameterized.TestCase):
 
   def test_number_of_options(self):
-    continue
+    self.assertLen(option_utils_amidar.Options, 714)
+    self.assertLen(option_utils_amidar.OptionsFill, 357)
+    self.assertLen(option_utils_amidar.OptionsEscape, 357)
 
   @parameterized.named_parameters(
       #   GoToXX_Any:
       #     - Grid cell of s_tp1 must match the grid cell XX.
       {
-          'testcase_name': 'GoTo 0 passenger inside. Dropping',
-          'option': ,
+          'testcase_name': 'Fill (1, 3) from (0, 3) + DOWN succeeds.',
+          'option': Options.OptionsFill[],
+          'row': ,
+          'col': ,
+          'action': ActionMap.DOWN,
+          'outcome': True,
       },
       {
-          'testcase_name': 'GoTo 0 passenger inside. Picking',
-          'option': ,
+          'testcase_name': 'Fill (1, 3) from (0, 3) + RIGHT fails.',
+          'option': Options.OptionsFill[],
+          'row': ,
+          'col': ,
+          'action': ActionMap.RIGHT,
+          'outcome': True,
       },
       {
-          'testcase_name': 'GoTo 0 passenger outside. Picking',
-          'option': ,
+          'testcase_name': 'Escape (1, 3) from (0, 3) + DOWN succeeds.',
+          'option': Options.OptionsEscape[],
+          'row': ,
+          'col': ,
+          'action': ActionMap.DOWN,
+          'outcome': True,
       },
       {
-          'testcase_name': 'GoTo 3 from 2 + East succeeds.',
-          'option': ,
-      },
-      {
-          'testcase_name': 'GoTo (1, 3) from (0, 3) + South succeeds.',
-          'option': ,
-      },
-      {
-          'testcase_name': 'GoTo (1, 3) from (0, 3) + EAST Fails.',
-          'option': ,
-      },
-      {
-          'testcase_name': 'GoTo 2 from 2 + East fails.',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Drop passenger in taxi at 0',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Fail to drop passenger @ 0 (not in vehicle) at 0',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Fail to drop passenger @ 2 (not in vehicle) at 0',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Drop passenger in vehicle at (0, 2)',
-          'option': ,
-      },
-      {
-          'testcase_name':
-              'Fail Drop passenger in vehicle at (0, 1) when at (0, 2)',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Cannot pickup when action is move.',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Fail to pickup passenger already inside.',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Try to pickup passenger @ 2 at 0',
-          'option': ,
-      },
-      {
-          'testcase_name': 'Try to pickup passenger @ 0 at 0',
-          'option': ,
+          'testcase_name': 'Escape (1, 3) from (0, 3) + RIGHT fails.',
+          'option': Options.OptionsEscape[],
+          'row': ,
+          'col': ,
+          'action': ActionMap.RIGHT,
+          'outcome': True,
       },
       )
   def test_check_option_termination(
