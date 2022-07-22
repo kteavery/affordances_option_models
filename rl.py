@@ -20,8 +20,8 @@ from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 from absl import logging
 import numpy as np
 
-from affordances_option_models.affordances import affordances_taxi
-from affordances_option_models.affordances import affordances_amidar
+from affordances_option_models.affordance import affordances_taxi
+from affordances_option_models.affordance import affordances_amidar
 from affordances_option_models.env_utils import env_utils_taxi
 from affordances_option_models.env_utils import env_utils_amidar
 
@@ -45,15 +45,14 @@ def _compute_q_v(
   """Computes Q-value."""
   if env == "Taxi":
     env_utils = env_utils_taxi
+    # All transitions out of the goal state should be masked out since you cannot
+    # actually _start_ your trajectories here and the environment terminates once
+    # you get here.
+    # TODO(zaf): Do this in a nicer way by doing a transition_matrix.copy() or
+    # doing this masking somewhere else.
+    transition_matrix[env_utils.GOAL_STATES, :] = 0
   else:
     env_utils = env_utils_amidar
-
-  # All transitions out of the goal state should be masked out since you cannot
-  # actually _start_ your trajectories here and the environment terminates once
-  # you get here.
-  # TODO(zaf): Do this in a nicer way by doing a transition_matrix.copy() or
-  # doing this masking somewhere else.
-  transition_matrix[env_utils.GOAL_STATES, :] = 0
 
   q_values = reward_matrix + gamma * np.einsum(
       'ijk,k->ij', transition_matrix, values)

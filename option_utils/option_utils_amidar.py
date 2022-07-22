@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 from absl import logging
 import numpy as np
 
-from affordances_option_models.affordances import affordances_amidar
+from affordances_option_models.affordance import affordances_amidar
 from affordances_option_models.definitions import definitions_amidar
 from affordances_option_models.env_utils import env_utils_amidar
 from affordances_option_models import rl

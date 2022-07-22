@@ -20,8 +20,8 @@ from absl import logging
 import numpy as np
 import tensorflow as tf
 
-from affordances_option_models.affordances import affordances_taxi
-from affordances_option_models.affordances import affordances_amidar
+from affordances_option_models.affordance import affordances_taxi
+from affordances_option_models.affordance import affordances_amidar
 
 NestedTensor = Union[tf.Tensor, List[tf.Tensor]]
 OptimizationStep = Callable[[NestedTensor], Dict[str, tf.Tensor]]
