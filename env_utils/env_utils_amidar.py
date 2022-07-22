@@ -1,6 +1,8 @@
 from typing import Any, NamedTuple, Tuple
 import gym
 import numpy as np
+import toybox
+from toybox.envs.atari.amidar import AmidarEnv
 
 from affordances_option_models.definitions import definitions_amidar
 
@@ -23,7 +25,7 @@ class AmidarState(NamedTuple):
 
 
 def make_amidar_environment():
-  return gym.make('Amidar').env
+  return AmidarEnv #gym.make('Amidar').env
 
 
 _GLOBAL_ENV = make_amidar_environment()
