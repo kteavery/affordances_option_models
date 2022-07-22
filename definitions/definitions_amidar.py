@@ -22,7 +22,7 @@ class ActionMap(enum.IntEnum):
 @enum.unique
 class Intents(enum.Enum):
   IntentJunctionFill = list(range(0,87)) # 5+6+9+6+9+6+10+8+13+8+7=87 number of junctions
-  IntentJunctionEscape = list(range(0,87)) 
+  IntentJunctionEscape = list(range(87,87*2)) 
 # pylint: enable=invalid-name
 
 JUNCTION_TO_INTENT_MAPPING = { Junctions.junctions[i]: [Intents.IntentJunctionFill[i], Intents.IntentJunctionEscape[i]] 
@@ -45,7 +45,7 @@ _NUM_GRID_CELLS = 357
 class Options(enum.Enum):
   """Options as defined by us in the amidar environment."""
   OptionsFill = list(range(0,357)) # 357 = total number of tracks
-  OptionsEscape = list(range(0,357)) # escape the five enemies
+  OptionsEscape = list(range(357,357*2)) # escape the five enemies
 
 # pylint: enable=invalid-name
 
