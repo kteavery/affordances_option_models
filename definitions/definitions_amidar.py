@@ -3,6 +3,8 @@
 import enum
 
 JUNCTIONS = list(range(0,87))
+INTENT_JUNCTION_FILL = list(range(0,87)) # 5+6+9+6+9+6+10+8+13+8+7=87 number of junctions
+INTENT_JUNCTION_ESCAPE = list(range(87,87*2)) 
 
 @enum.unique
 class ActionMap(enum.IntEnum):
@@ -14,15 +16,7 @@ class ActionMap(enum.IntEnum):
   LEFT = 4
   DOWN = 5
 
-
-# pylint: disable=invalid-name
-@enum.unique
-class Intents(enum.Enum):
-  IntentJunctionFill = list(range(0,87)) # 5+6+9+6+9+6+10+8+13+8+7=87 number of junctions
-  IntentJunctionEscape = list(range(87,87*2)) 
-# pylint: enable=invalid-name
-
-JUNCTION_TO_INTENT_MAPPING = { JUNCTIONS[i]: [Intents.IntentJunctionFill[i], Intents.IntentJunctionEscape[87+i]] 
+JUNCTION_TO_INTENT_MAPPING = { JUNCTIONS[i]: [INTENT_JUNCTION_FILL[i], INTENT_JUNCTION_ESCAPE[87+i]] 
   for i in range(0,87) }
 
 

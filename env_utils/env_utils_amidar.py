@@ -7,7 +7,7 @@ from toybox.envs.atari.amidar import AmidarEnv
 from affordances_option_models.definitions import definitions_amidar
 
 
-Junctions = definitions_amidar.Junctions
+Junctions = definitions_amidar.JUNCTIONS
 
 class AmidarState(NamedTuple):
   """Human readable version of amidar state."""
@@ -46,7 +46,7 @@ def int_to_state_fn(x: int) -> AmidarState:
   return state
 
 
-LOCATION_TO_JUNCTION_MAPPING = {v: k for k, v in zip(Junctions.junctions, _GLOBAL_ENV.locs)}
+LOCATION_TO_JUNCTION_MAPPING = {v: k for k, v in zip(Junctions, _GLOBAL_ENV.locs)}
 
 
 def grid_cell_to_xy(pos: int, grid_size: int = 5) -> Tuple[int, int]:
