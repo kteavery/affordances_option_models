@@ -25,7 +25,7 @@ class AmidarState(NamedTuple):
 
 
 def make_amidar_environment():
-  return AmidarEnv #gym.make('Amidar').env
+  return gym.make('Amidar').env #AmidarEnv #gym.make('Amidar').env
 
 
 _GLOBAL_ENV = make_amidar_environment()
