@@ -5,6 +5,7 @@ import enum
 JUNCTIONS = list(range(0,87))
 INTENT_JUNCTION_FILL = list(range(0,87)) # 5+6+9+6+9+6+10+8+13+8+7=87 number of junctions
 INTENT_JUNCTION_ESCAPE = list(range(87,87*2)) 
+_NUM_GRID_CELLS = 357
 
 @enum.unique
 class ActionMap(enum.IntEnum):
@@ -16,7 +17,7 @@ class ActionMap(enum.IntEnum):
   LEFT = 4
   DOWN = 5
 
-JUNCTION_TO_INTENT_MAPPING = { JUNCTIONS[i]: [INTENT_JUNCTION_FILL[i], INTENT_JUNCTION_ESCAPE[87+i]] 
+JUNCTION_TO_INTENT_MAPPING = { JUNCTIONS[i]: [INTENT_JUNCTION_FILL[i], INTENT_JUNCTION_ESCAPE[i]] 
   for i in range(0,87) }
 
 
@@ -24,8 +25,6 @@ class IntentStatus(enum.IntEnum):
   """Indicates if intents were completed or not."""
   complete = 1
   incomplete = 0
-
-_NUM_GRID_CELLS = 357
 
 # Unfortunately, we have to define each option explicitly to avoid the
 # limitations of the functional API given here:
