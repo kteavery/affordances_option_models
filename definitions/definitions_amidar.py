@@ -2,10 +2,7 @@
 
 import enum
 
-@enum.unique
-class Junctions(enum.Enum):
-  junctions = list(range(0,87))
-
+JUNCTIONS = list(range(0,87))
 
 @enum.unique
 class ActionMap(enum.IntEnum):
@@ -25,7 +22,7 @@ class Intents(enum.Enum):
   IntentJunctionEscape = list(range(87,87*2)) 
 # pylint: enable=invalid-name
 
-JUNCTION_TO_INTENT_MAPPING = { Junctions.junctions[i]: [Intents.IntentJunctionFill[i], Intents.IntentJunctionEscape[87+i]] 
+JUNCTION_TO_INTENT_MAPPING = { JUNCTIONS[i]: [Intents.IntentJunctionFill[i], Intents.IntentJunctionEscape[87+i]] 
   for i in range(0,87) }
 
 
