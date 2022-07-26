@@ -2,10 +2,17 @@
 
 import enum
 
-JUNCTIONS = list(range(0,87))
-INTENT_JUNCTION_FILL = list(range(0,87)) # 5+6+9+6+9+6+10+8+13+8+7=87 number of junctions
-INTENT_JUNCTION_ESCAPE = list(range(87,87*2)) 
+JUNCTIONS = list(range(0,56))
+INTENT_JUNCTION_FILL = list(range(0,56)) 
+INTENT_JUNCTION_ESCAPE = list(range(56,56*2)) 
 _NUM_GRID_CELLS = 357
+
+JUNCTION_LOCATIONS = [(6,0), (12,0), (19,0), (25,0),
+                    (0,6), (5,6), (6,6), (12,6), (14,6), (17,6), (19,6), (25,6), (26,6), (31,6), 
+                    (0,12), (3,12), (5,12), (11,12), (14, 12), (17,12), (20, 12), (26, 12), (28, 12), (31, 12),
+                    (0,18), (3,18), (4,18), (9,18), (11,18), (12,18), (19,18), (20,18), (22,18), (27,18), (28,18), (31,18), 
+                    (0,24), (4,24), (6,24), (9,24), (10,24), (12,24), (14,24), (17,24), (19,24), (21,24), (22,24), (25,24), (27,24), (31,24), 
+                    (6,30), (10,30), (14,30), (17,30), (21,30), (25,30) ]
 
 @enum.unique
 class ActionMap(enum.IntEnum):
@@ -18,7 +25,7 @@ class ActionMap(enum.IntEnum):
   DOWN = 5
 
 JUNCTION_TO_INTENT_MAPPING = { JUNCTIONS[i]: [INTENT_JUNCTION_FILL[i], INTENT_JUNCTION_ESCAPE[i]] 
-  for i in range(0,87) }
+  for i in range(0,56) }
 
 
 class IntentStatus(enum.IntEnum):

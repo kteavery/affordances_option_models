@@ -7,7 +7,8 @@ from toybox.envs.atari.amidar import AmidarEnv
 from affordances_option_models.definitions import definitions_amidar
 
 
-Junctions = definitions_amidar.JUNCTIONS
+junctions = definitions_amidar.JUNCTIONS
+junction_locations = definitions_amidar.JUNCTION_LOCATIONS
 
 class AmidarState(NamedTuple):
   """Human readable version of amidar state."""
@@ -16,8 +17,8 @@ class AmidarState(NamedTuple):
   destination: int
 
   def validate(self):
-    if self.destination > 86:
-      raise ValueError('Only 87 possible destinations are valid.')
+    if self.destination > 55:
+      raise ValueError('Only 56 possible destinations are valid.')
     if not 0 <= self.row <= 31:
       raise ValueError('Row must be between (0, 31)')
     if not 0 <= self.col <= 30: 
@@ -46,7 +47,7 @@ def int_to_state_fn(x: int) -> AmidarState:
   return state
 
 
-LOCATION_TO_JUNCTION_MAPPING = {v: k for k, v in zip(Junctions, _GLOBAL_ENV.locs)}
+LOCATION_TO_JUNCTION_MAPPING = {v: k for k, v in zip(junctions, junction_locations)}
 
 
 def grid_cell_to_xy(pos: int, grid_size: int = 5) -> Tuple[int, int]:
