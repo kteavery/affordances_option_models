@@ -9,12 +9,6 @@ from affordances_option_models.definitions import definitions_amidar
 
 Junctions = definitions_amidar.JUNCTIONS
 
-_GLOBAL_ENV = make_amidar_environment()
-NUM_STATES = 362
-print(_GLOBAL_ENV._action_set)
-NUM_ACTIONS = len(_GLOBAL_ENV._action_set) 
-
-
 class AmidarState(NamedTuple):
   """Human readable version of amidar state."""
   row: int
@@ -33,6 +27,11 @@ class AmidarState(NamedTuple):
 def make_amidar_environment():
   print(AmidarEnv)
   return AmidarEnv #gym.make('Amidar').env 
+
+  _GLOBAL_ENV = make_amidar_environment()
+NUM_STATES = 362
+print(_GLOBAL_ENV._action_set)
+NUM_ACTIONS = len(_GLOBAL_ENV._action_set) 
 
 
 def state_to_int_fn(amidar_state: AmidarState) -> int:
