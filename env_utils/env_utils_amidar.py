@@ -28,7 +28,7 @@ def make_amidar_environment():
   print(AmidarEnv)
   return AmidarEnv #gym.make('Amidar').env 
 
-  _GLOBAL_ENV = make_amidar_environment()
+_GLOBAL_ENV = make_amidar_environment()
 NUM_STATES = 362
 print(_GLOBAL_ENV._action_set)
 NUM_ACTIONS = len(_GLOBAL_ENV._action_set) 
