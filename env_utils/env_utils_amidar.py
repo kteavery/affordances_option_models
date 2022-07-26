@@ -9,6 +9,12 @@ from affordances_option_models.definitions import definitions_amidar
 
 Junctions = definitions_amidar.JUNCTIONS
 
+_GLOBAL_ENV = make_amidar_environment()
+NUM_STATES = 362
+print(_GLOBAL_ENV._action_set)
+NUM_ACTIONS = len(_GLOBAL_ENV._action_set) 
+
+
 class AmidarState(NamedTuple):
   """Human readable version of amidar state."""
   row: int
@@ -27,11 +33,6 @@ class AmidarState(NamedTuple):
 def make_amidar_environment():
   print(AmidarEnv)
   return AmidarEnv #gym.make('Amidar').env 
-
-
-_GLOBAL_ENV = make_amidar_environment()
-NUM_STATES = _GLOBAL_ENV.nS
-NUM_ACTIONS = _GLOBAL_ENV.nA
 
 
 def state_to_int_fn(amidar_state: AmidarState) -> int:
@@ -75,18 +76,16 @@ def get_transition_and_reward_matrices() -> Tuple[Any, np.ndarray, np.ndarray]:
     R_matrix: A |S| x |A| matrix representing where R[s, a] represents the
       reward obtained by taking action a from state s.
   """
-  num_states = _GLOBAL_ENV.nS
-  num_actions = _GLOBAL_ENV.nA
   # pylint: disable=invalid-name
   P = {
       s: {a: [tup[:3] for tup in tups] for (a, tups) in a2d.items()
          } for (s, a2d) in _GLOBAL_ENV.P.items()
   }
-  P_matrix = np.zeros((num_states, num_actions, num_states), dtype=np.float32)
-  R_matrix = np.zeros((num_states, num_actions))
+  P_matrix = np.zeros((NUM_STATES, NUM_ACTIONS, NUM_STATES), dtype=np.float32)
+  R_matrix = np.zeros((NUM_STATES, NUM_ACTIONS))
   # pylint: enable=invalid-name
   for (s, transition) in P.items():
-    for a in range(num_actions):
+    for a in range(NUM_ACTIONS):
       prob, sprime, reward = transition[a][0]
       P_matrix[s, a, sprime] = prob
       R_matrix[s, a] = reward
