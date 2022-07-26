@@ -30,8 +30,7 @@ def make_amidar_environment():
 
 _GLOBAL_ENV = make_amidar_environment()
 NUM_STATES = 362
-print(_GLOBAL_ENV._action_set)
-NUM_ACTIONS = len(_GLOBAL_ENV._action_set) 
+NUM_ACTIONS = 6
 
 
 def state_to_int_fn(amidar_state: AmidarState) -> int:
