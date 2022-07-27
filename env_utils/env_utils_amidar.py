@@ -77,8 +77,8 @@ def get_transition_and_reward_matrices() -> Tuple[Any, np.ndarray, np.ndarray]:
   """
   # pylint: disable=invalid-name
   P = {
-      s: {a: [tup[:3] for tup in tups] for (a, tups) in a2d.items()
-         } for (s, a2d) in _GLOBAL_ENV.P.items()
+      s: {a: [] for a in range(NUM_ACTIONS)}
+            for s in range(NUM_STATES)
   }
   P_matrix = np.zeros((NUM_STATES, NUM_ACTIONS, NUM_STATES), dtype=np.float32)
   R_matrix = np.zeros((NUM_STATES, NUM_ACTIONS))
